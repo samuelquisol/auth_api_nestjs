@@ -4,16 +4,16 @@ import {
   Post,
   Body,
   Patch,
-  Delete,
   Param,
   Query,
-  Request,
   ParseUUIDPipe,
+  Delete,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { PaginationDto } from '';
+import { CreateUserDto } from '';
+import { UpdateUserDto } from '';
+import { PaginationDto } from './utils/pagination.dto';
 import { ValidRoles } from './data-standardizers/valid-roles';
-import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Auth } from '';
 import { UserService } from './users.service';
 import {
   ApiBadRequestResponse,
@@ -23,7 +23,6 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
-  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -34,54 +33,45 @@ export class UsersController {
   constructor(private readonly userService: UserService) {}
 
   @ApiOperation({ summary: 'Create user' })
-  @ApiCreatedResponse({ description: 'Success' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiInternalServerErrorResponse({ description: 'Server Error' })
+  @ApiCreatedResponse({ description: 'User created successfully' })
+  @ApiBadRequestResponse({ description: 'Invalid data provided' })
   @Post()
-  createUser(@Body() dto: CreateUserDto) {
+  create(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
   }
 
   @Auth(!ValidRoles.USER)
   @ApiOperation({ summary: 'Get all users' })
-  @ApiOkResponse({ description: 'Success' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiInternalServerErrorResponse({ description: 'Server Error' })
+  @ApiOkResponse({ description: 'List of users retrieved successfully' })
+  @ApiNotFoundResponse({ description: 'No users found' })
   @Get()
   findAll(@Query() dto: PaginationDto) {
     return this.userService.findAll(dto);
   }
 
-  @Auth(!ValidRoles.USER)
-  @ApiOperation({ summary: 'Update user role' })
-  @ApiOkResponse({ description: 'Success' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @Auth()
+  @ApiOperation({ summary: 'Update user' })
+  @ApiOkResponse({ description: 'User updated successfully' })
+  @ApiNotFoundResponse({ description: 'User not found' })
+  @ApiBadRequestResponse({ description: 'Invalid data provided' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiInternalServerErrorResponse({ description: 'Server Error' })
-  @ApiParam({ name: 'id', description: 'uuid user' })
-  @ApiQuery({ name: 'role', description: 'role to update' })
-  @Patch(':id/role')
-  updateRole(
+  @ApiInternalServerErrorResponse({ description: 'Server error' })
+  @ApiParam({ name: 'id', description: 'User ID' })
+  @Patch(':id')
+  async updateUser(
     @Param('id', ParseUUIDPipe) id: string,
-    @Query('role') role: string,
-    @Request() req,
+    @Body() updateUserDto: UpdateUserDto,
   ) {
-    return this.userService.updateRole(id, role, req.user);
+    return this.userService.update(id, updateUserDto);
   }
 
-  @Auth(ValidRoles.SUPERADMIN)
+  @Auth()
   @ApiOperation({ summary: 'Delete user' })
-  @ApiOkResponse({ description: 'Success' })
-  @ApiNotFoundResponse({ description: 'Not Found' })
-  @ApiBadRequestResponse({ description: 'Bad Request' })
+  @ApiOkResponse({ description: 'User deleted successfully' })
+  @ApiNotFoundResponse({ description: 'User not found' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  @ApiInternalServerErrorResponse({ description: 'Server Error' })
-  @ApiParam({ name: 'id', description: 'uuid user' })
+  @ApiInternalServerErrorResponse({ description: 'Server error' })
+  @ApiParam({ name: 'id', description: 'User ID' })
   @Delete(':id')
   removeUser(@Param('id', ParseUUIDPipe) id: string) {
     return this.userService.remove(id);

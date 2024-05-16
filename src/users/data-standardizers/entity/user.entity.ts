@@ -20,6 +20,7 @@ export class User extends Document {
   @Prop({ required: true })
   username?: string;
 
+  @IsNotEmpty()
   @IsEmail()
   @Transform(({ value }) => value.toLowerCase())
   @Prop({ required: true })

@@ -8,7 +8,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto, UpdateUserDto } from '../dto';
 import { User } from './data-standardizers/entity/user.entity';
-import { ValidRoles } from './data-standardizers/valid-roles';
 
 @Injectable()
 export class UserService {
@@ -17,9 +16,7 @@ export class UserService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     const { email } = createUserDto
     
-    const existingUser = await this.userModel
-      .findOne({ email: email })
-      .exec();
+    const existingUser = await this.userModel.findOne({ email: email }).exec();
     if (existingUser) {
       throw new HttpException(
         `User with email ${email} already exists`,
@@ -60,21 +57,11 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const updatedUser = await this.userModel
-      .findByIdAndUpdate(id, updateUserDto, { new: true })
-      .exec();
+    const updatedUser = await this.userModel.findByIdAndUpdate(id, updateUserDto, { new: true }).exec();
     if (!updatedUser) {
       throw new NotFoundException(`User with id ${id} not found`);
     }
     return updatedUser;
-  }
-
-  async updateRole(id: string, role: string, user: User) {
-    if (!(role in ValidRoles)) {
-      throw new NotFoundException(
-        `A valid role is required: ${Object.values(ValidRoles)}`,
-      );
-    }
   }
 
   async remove(id: string): Promise<void> {
