@@ -9,7 +9,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Library_PRO API')
     .setDescription(
-      'The library API is a simple manager system that allows you to manage books and authors.',
+      ' ',
     )
     .setVersion('1.0')
     .addTag('library')
