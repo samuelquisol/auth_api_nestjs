@@ -9,11 +9,11 @@ import {
   ParseUUIDPipe,
   Delete,
 } from '@nestjs/common';
-import { CreateUserDto } from '';
-import { UpdateUserDto } from '';
-import { PaginationDto } from './utils/pagination.dto';
+import { CreateUserDto } from './data-standardizers/dtos/create-user.dto';
+import { UpdateUserDto } from './data-standardizers/dtos/update-user.dto';
+import { PaginationDto } from './data-standardizers/dtos/pagination.dto';
 import { ValidRoles } from './data-standardizers/valid-roles';
-import { Auth } from '';
+/* import { Auth } from ''; */
 import { UserService } from './users.service';
 import {
   ApiBadRequestResponse,
@@ -40,7 +40,7 @@ export class UsersController {
     return this.userService.create(dto);
   }
 
-  @Auth(!ValidRoles.USER)
+  /* @Auth(!ValidRoles.USER) */
   @ApiOperation({ summary: 'Get all users' })
   @ApiOkResponse({ description: 'List of users retrieved successfully' })
   @ApiNotFoundResponse({ description: 'No users found' })
@@ -49,7 +49,7 @@ export class UsersController {
     return this.userService.findAll(dto);
   }
 
-  @Auth()
+  /* @Auth() */
   @ApiOperation({ summary: 'Update user' })
   @ApiOkResponse({ description: 'User updated successfully' })
   @ApiNotFoundResponse({ description: 'User not found' })
@@ -65,7 +65,7 @@ export class UsersController {
     return this.userService.update(id, updateUserDto);
   }
 
-  @Auth()
+  /* @Auth() */
   @ApiOperation({ summary: 'Delete user' })
   @ApiOkResponse({ description: 'User deleted successfully' })
   @ApiNotFoundResponse({ description: 'User not found' })
